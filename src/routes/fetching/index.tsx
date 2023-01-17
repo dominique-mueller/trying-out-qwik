@@ -1,42 +1,28 @@
-import { component$, Resource } from '@builder.io/qwik';
-import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
-import { useEndpoint } from '@builder.io/qwik-city';
-
-export const onGet: RequestHandler<any> = async () => {
-  await new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 1000);
-  });
-
-  return [
-    {
-      title: 'First post',
-    },
-    {
-      title: 'Second post',
-    },
-    {
-      title: 'Third post',
-    },
-  ];
-};
+import { component$, Resource, useResource$ } from '@builder.io/qwik';
+import type { DocumentHead } from '@builder.io/qwik-city';
 
 export default component$(() => {
-  const posts = useEndpoint<Array<{ title: string }>>();
+  const reposResource = useResource$<any>(async ({ cleanup }) => {
+    const abortController = new AbortController();
+    cleanup(() => abortController.abort('cleanup'));
+    const res = await fetch('https://api.github.com/users/dominique-mueller/repos', {
+      signal: abortController.signal,
+    });
+    return res.json();
+  });
 
   return (
     <div>
       <h2>Data</h2>
 
       <Resource
-        value={posts}
+        value={reposResource}
         onPending={() => <div>Loading...</div>}
         onRejected={() => <div>Error</div>}
-        onResolved={(posts) => (
+        onResolved={(repos) => (
           <ul>
-            {posts.map((post) => (
-              <li>{post.title}</li>
+            {repos.map((repo: any) => (
+              <li>{repo.name}</li>
             ))}
           </ul>
         )}
