@@ -137,8 +137,12 @@ export default component$(() => {
           </a>
         </li>
       </ul>
-      <Link class="mindblow" href="/flower/">
-        Blow my mind 🤯
+      <Link class="mindblow" href="/form/">
+        Go to form
+      </Link>
+
+      <Link class="mindblow" href="/fetching/">
+        Go to fetching
       </Link>
     </div>
   );
